@@ -1,9 +1,6 @@
 import java.io.ByteArrayOutputStream;
-import java.io.Console;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,10 +12,10 @@ public class Program {
     public static void main (String[] args) throws IOException {
 	
 	//Check Argument Count
-	if ( args.length < 5 || args.length > 5 ) {
+	if ( args.length < 4 || args.length > 5 ) {
 	    System.err.println ( "Arguments Not Complete" );
 	    System.out.println (
-		    "The input command is: java tcp_udp_protocols_client_server [TCP | UDP] [Client | Server] DestinatonIP PortNumber FilePath" );
+		    "The input command is: java tcp_udp_protocols_client_server [TCP | UDP] [Client | Server] DestinatonIP PortNumber ~FilePath (Client Only)" );
 	    System.exit ( -1 );
 	}
 
@@ -37,7 +34,7 @@ public class Program {
 		break;
 	    default :
 		System.out.println (
-			"The input command is: java tcp_udp_protocols_client_server [TCP | UDP] [Client | Server] DestinatonIP PortNumber FilePath" );
+			"The input command is: java tcp_udp_protocols_client_server [TCP | UDP] [Client | Server] DestinatonIP PortNumber ~FilePath (Client Only)" );
 		System.exit ( 10 );
 	}
 
@@ -53,7 +50,7 @@ public class Program {
 		break;
 	    default :
 		System.out.println (
-			"The input command is: java tcp_udp_protocols_client_server [TCP | UDP] [Client | Server] DestinatonIP PortNumber FilePath" );
+			"The input command is: java tcp_udp_protocols_client_server [TCP | UDP] [Client | Server] DestinatonIP PortNumber ~FilePath (Client Only)" );
 		System.exit ( 10 );
 	}
 
@@ -73,14 +70,16 @@ public class Program {
 	    System.exit ( 2 );
 	}
 	
-	//Insert File Bytes into String
+	
 	byte[] fileBytes = null;
-	try {
-	    Path path = Paths.get ( args[4] );
-	    fileBytes = Files.readAllBytes ( path );		
-	} catch ( FileNotFoundException fe){
-	    System.out.println ( "FNF: " + fe );
-	    System.exit ( 3 );
+	if(clientServerFlag){
+    		try {
+    	    		Path path = Paths.get ( args[4] );
+    	    		fileBytes = Files.readAllBytes ( path );		
+    		} catch ( FileNotFoundException fe){
+    	    		System.out.println ( "FNF: " + fe );
+    	    		System.exit ( 3 );
+    		}
 	}
 	
 	if(tcpUdpFlag){
@@ -113,7 +112,7 @@ public class Program {
 
     public static ArrayList<byte[]> fileSplit ( byte[] fileBytes ) throws IOException {
 	
-	int partitionSize = 1024 * 8; // 8 KB per Packet
+	int partitionSize = 1024; //  1KB per Packet - ~1400 max to keep under the 1500 limit while concat'ing headers
 	int start = 0;
 		
 	ArrayList<byte[]> partitionArray = new ArrayList<byte[]>();
