@@ -30,6 +30,7 @@ public class TCP {
 
 	    // Convert to String, then bytes, then write to socket
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
+	    out.flush ();
 	    out.write ( baos.toByteArray () );
 
 	    // Console the Packet Size
@@ -47,6 +48,7 @@ public class TCP {
 
 		// Tell Server File Name
 		baos.write ( file.getName ().getBytes () );
+		out.flush ();
 		out.write ( baos.toByteArray () );
 
 		// Send File
@@ -80,6 +82,7 @@ public class TCP {
 
 	    // ACK Packet Count
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
+	    out.flush ();
 	    out.write ( baos.toByteArray () );
 
 	    // Get File Name
