@@ -16,7 +16,8 @@ public class TCP {
     public static void Client ( String IP, int portNumber, File file ) {
 
 	try ( Socket socket = new Socket ( IP, portNumber );
-		InputStream in = new FileInputStream ( file );
+		InputStream inFile = new FileInputStream ( file );
+		InputStream in	= socket.getInputStream ();
 		OutputStream out = socket.getOutputStream ();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
@@ -37,7 +38,7 @@ public class TCP {
 	    //------------WAIT ON SERVER
 	    
 	    // Get Packet Count ACK and Give File Name
-	    in.read ( buffer );
+	    inFile.read ( buffer );
 	    String bufferString = new String ( buffer.toString () );
 	    System.out.println ( bufferString );
 
