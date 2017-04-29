@@ -17,20 +17,21 @@ public class TCP {
 
 	try ( Socket socket = new Socket ( IP, portNumber );
 		InputStream in = new FileInputStream ( file );
-		OutputStream out = socket.getOutputStream (); ) {
+		OutputStream out = socket.getOutputStream ();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
-	    System.out.println ( "Client Connected!" );
+	    System.out.println ( "Connected to Server!" );
 
 	    int count = 1;
 	    int packetCount = ( int ) Math.ceil ( file.length () / buffer.length );
 
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream ();
 	    baos.write ( "Packets: ".getBytes () );
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
 
 	    byte[] packetCountByteString = baos.toByteArray ();
 
 	    out.write ( packetCountByteString );
+
 	    // Get asked file name
 	    // Tell Server File Name
 	    //
@@ -52,14 +53,20 @@ public class TCP {
 	try ( ServerSocket server = new ServerSocket ( portNumber );
 		Socket socket = server.accept ();
 		InputStream in = socket.getInputStream ();
-		OutputStream out = new FileOutputStream ( fileName ); ) {
+		OutputStream out = new FileOutputStream ( fileName ); 
+		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
 	    in.read ( buffer );
+
+	    String bufferString = new String ( buffer );
+	    System.out.println ( "Incoming " + bufferString );
 	    
-	    String bufferString = new String(buffer);
+	    String[] tokens = bufferString.split ( "\\s+", 2 );
 	    
-	    System.out.println ( bufferString );
+	    int packetCount = Integer.parseInt ( tokens[1] );
 	    
+	    System.out.println ( packetCount );
+
 	    // Ask for File Name
 	    // Get File Name
 
