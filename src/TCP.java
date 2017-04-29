@@ -29,9 +29,7 @@ public class TCP {
 	    int packetCount = ( int ) Math.ceil ( file.length () / buffer.length );
 
 	    // Convert to String, then bytes, then write to socket
-	    baos.flush ();
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
-	    out.flush ();
 	    out.write ( baos.toByteArray () );
 
 	    // Console the Packet Size
@@ -76,20 +74,20 @@ public class TCP {
 		OutputStream fileOut = new FileOutputStream ( fileName );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
-	    in.read ( buffer );
+	    int position = 0;
+	    
+	    position += in.read ( buffer );	    
 	    String packetCountString = new String ( buffer );
 	    System.out.println ( "Incoming Packets: " + packetCountString );
 
 	    int packetCount = Integer.parseInt ( packetCountString.trim () );
 
 	    // ACK Packet Count
-	    baos.flush ();
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
-	    out.flush ();
 	    out.write ( baos.toByteArray () );
 
 	    // Get File Name
-	    in.read ( buffer );
+	    position += in.read ( buffer );
 	    String fileNameFromClient = new String ( buffer );
 	    fileName.trim ();
 	    
