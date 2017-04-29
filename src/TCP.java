@@ -23,16 +23,22 @@ public class TCP {
 	    System.out.println ( "Connected to Server!" );
 
 	    int count = 1;
+	    
+	    //Get Packet Count Figured out
 	    int packetCount = ( int ) Math.ceil ( file.length () / buffer.length );
 
+	    //Convert to String, then bytes, then write to socket
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
 	    out.write ( baos.toByteArray () );
 
+	    //Console the Packet Size
 	    System.out.println ( "Sending " + packetCount + " Packets." );
 
+	    //------------WAIT ON SERVER
+	    
 	    // Get Packet Count ACK and Give File Name
 	    in.read ( buffer );
-	    String bufferString = new String ( buffer );
+	    String bufferString = new String ( buffer.toString () );
 	    System.out.println ( bufferString );
 
 	    if ( bufferString.contains ( Integer.toString ( packetCount ) ) ) {
@@ -60,11 +66,11 @@ public class TCP {
 	try ( ServerSocket server = new ServerSocket ( portNumber );
 		Socket socket = server.accept ();
 		InputStream in = socket.getInputStream ();
-		OutputStream out = new FileOutputStream ( fileName );
+		OutputStream out = socket.getOutputStream ();
+		OutputStream fileOut = new FileOutputStream ( fileName );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
 	    in.read ( buffer );
-
 	    String bufferString = new String ( buffer );
 	    System.out.println ( "Incoming Packets: " + bufferString );
 
@@ -82,7 +88,7 @@ public class TCP {
 
 	    int count = 1;
 	    while ( ( count = in.read ( buffer ) ) > 0 ) {
-		out.write ( buffer, 0, count );
+		fileOut.write ( buffer, 0, count );
 	    }
 
 	} catch ( IOException e ) {
