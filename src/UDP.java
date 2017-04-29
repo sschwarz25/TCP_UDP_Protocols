@@ -8,7 +8,7 @@ import java.net.InetAddress;
 import java.util.StringTokenizer;
 
 public class UDP {
-    private final static String saveFilePath = "C:/data/down";
+    private final static String saveFilePath = "C:/Test/";
 
     public static void Server ( int portNumber ) throws IOException {
 
