@@ -34,6 +34,7 @@ public class TCP {
 
 		    for ( int i = 0; i < data.size (); i++ ) {
 			byteStrings.add ( sequenceNumber + " " + data.get ( i ) );
+			sequenceNumber++;
 			toServer.println ( byteStrings.get ( i ) );
 			System.out.println ( byteStrings.get ( i ) );
 		    }
