@@ -68,38 +68,17 @@ public class Program {
 	    System.exit ( 2 );
 	}
 
-	byte[] fileBytes = null;
-	if ( clientServerFlag ) {
-	    try {
-		Path path = Paths.get ( args[4] );
-		fileBytes = Files.readAllBytes ( path );
-	    } catch ( FileNotFoundException fe ) {
-		System.out.println ( "FNF: " + fe );
-		System.exit ( 3 );
-	    }
-	}
-
 	if ( tcpUdpFlag ) {
-	    // TCP
 	    if ( clientServerFlag ) {
-		// Client
-		TCP.Client ( destinationIp, portNumber, fileSplit ( fileBytes ) );
+		TCP.Client ( destinationIp, portNumber, new File( args[4]) );
 	    } else {
-		// Server
-		fileBytes = reassembleFile ( TCP.Server ( portNumber ) );
-
-		System.out.println ( "Successful Transfer - Writing to File" );
-
-		FileUtils.writeByteArrayToFile ( new File ( "C:\\Test\\1.jpg" ), fileBytes );
-
+		TCP.Server ( portNumber, args[4] );
 	    }
+	
 	} else {
-	    // UDP
 	    if ( clientServerFlag ) {
-		// Client
 		UDP.Client ( destinationIp, portNumber, new File ( args[4] ) );
 	    } else {
-		// Server
 		UDP.Server ( portNumber );
 	    }
 	}
