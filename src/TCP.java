@@ -47,10 +47,9 @@ public class TCP {
 		out.println ( file.getName () );
 
 		// Send File
-		String read = "";
 		int seqNo = 0;
-		while ( ( read = in.readLine () ) != null ) {
-		    out.println (seqNo + " " + read );
+		while ( ( inFile.read( buffer ) ) > 0 ) {
+		    out.println (seqNo + " " + new String(buffer) );
 		    seqNo++;
 		}
 	    }
