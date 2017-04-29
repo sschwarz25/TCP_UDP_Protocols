@@ -19,18 +19,24 @@ public class TCP {
 	      OutputStream out = socket.getOutputStream ();
 	) {
 	    
+	    System.out.println ("Client Connected!");
+	    
 	    int count = 1;
+	    
+	    //Come up with Packet Count
+	    //Tell Server Packet Count
+	    //Get asked file name
+	    //Tell Server File Name
+	    //
 	    
 	    while ((count = in.read (bufferSize)) > 0) {
 		out.write ( bufferSize, 0, count );
 	    }
 	    
 	} catch ( UnknownHostException e ) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	
 	} catch ( IOException e ) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }
@@ -43,13 +49,16 @@ public class TCP {
 		OutputStream out = new FileOutputStream ( fileName ); 
 	) {
 	    
+	    //Get Packet Count
+	    //Ask for File Name
+	    //Get File Name
+	    
 	    int count = 1;
 	    while (( count = in.read (bufferSize)) > 0){
 		out.write ( bufferSize, 0, count );
 	    }
 
 	} catch ( IOException e ) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace ();
 	}
 

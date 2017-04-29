@@ -1,15 +1,8 @@
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import org.apache.commons.io.FileUtils;
 
 public class Program {
 
@@ -70,11 +63,13 @@ public class Program {
 
 	if ( tcpUdpFlag ) {
 	    if ( clientServerFlag ) {
-		TCP.Client ( destinationIp, portNumber, new File( args[4]) );
+		System.out.println ( "Connecting to Server..." );
+		TCP.Client ( destinationIp, portNumber, new File ( args[4] ) );
 	    } else {
+		System.out.println ( "Waiting for Client to Connect..." );
 		TCP.Server ( portNumber, args[4] );
 	    }
-	
+
 	} else {
 	    if ( clientServerFlag ) {
 		UDP.Client ( destinationIp, portNumber, new File ( args[4] ) );
