@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,10 +13,11 @@ public class TCP {
 
     public static void Client ( String IP, int portNumber, ArrayList<byte[]> data ) {
 
-	try ( Socket connection = new Socket ( IP, portNumber );
-		PrintWriter toServer = new PrintWriter ( connection.getOutputStream (), true );
-		BufferedReader fromServer = new BufferedReader (
-			new InputStreamReader ( connection.getInputStream () ) ); ) {
+	try (   Socket            connection	= new Socket ( IP, portNumber );
+		PrintWriter       toServer	= new PrintWriter ( connection.getOutputStream (), true );
+		BufferedReader    fromServer	= new BufferedReader (
+						  new InputStreamReader ( connection.getInputStream () ) ); ) {
+	    
 	    CommunicationProtocol commsProtocol = new CommunicationProtocol ();
 	    commsProtocol.setPacketCount ( data.size () );
 
@@ -34,13 +36,16 @@ public class TCP {
 		    int sequenceNumber = 0;
 
 		    for ( int i = 0; i < data.size (); i++ ) {
-			String byteString = new String(data.get ( i ));
+			String byteString = new String ( data.get ( i ) );
 			byteStrings.add ( sequenceNumber + " " + byteString );
 			sequenceNumber++;
+		    }
+
+		    for ( int i = 0; i < data.size (); i++){
 			toServer.println ( byteStrings.get ( i ) );
 			System.out.println ( byteStrings.get ( i ) );
 		    }
-
+		    
 		    messageToServer = commsProtocol.getComplete ();
 
 		}
@@ -69,6 +74,8 @@ public class TCP {
 
 	    System.out.println ( "Client connected." );
 
+	    int sequenceNumber = 0;
+
 	    CommunicationProtocol commsProtocol = new CommunicationProtocol ();
 
 	    String messageToClient = commsProtocol.ProcessInput_Server ( "" );
@@ -93,37 +100,42 @@ public class TCP {
 
 			if ( verified ) {
 			    return data;
-			    
+
 			} else {
 			    System.out.println ( "Lost Packets" );
 			}
 
 		    } else {
 			System.out.println ( messageFromClient );
-			String[] tokens = messageFromClient.split ( "\\s+" );
+			String[] tokens = messageFromClient.split ( commsProtocol.getDelimiter (), 2 );
 			byte[] packetBytes = tokens[1].getBytes ();
 
 			try {
-			    int sequenceNumber = Integer.parseInt ( tokens[0] );
+			    sequenceNumber = Integer.parseInt ( tokens[0] );
 
 			    data[sequenceNumber] = packetBytes;
 
 			    continue;
 			} catch ( NumberFormatException ne ) {
-			    System.out.println ( "Packet not in proper format: " + ne );
+			    ByteArrayOutputStream outputStream = new ByteArrayOutputStream ();
+			    outputStream.write ( data[sequenceNumber] );
+			    outputStream.write ( packetBytes );
+
+			    data[sequenceNumber] = outputStream.toByteArray ();
 			}
 		    }
 
 		}
 
 		messageToClient = commsProtocol.ProcessInput_Server ( messageFromClient );
+		if ( messageToClient != null ) {
+		    // PackAck - Setup Verification Array
+		    if ( messageToClient.contains ( commsProtocol.getPacketCountAck () ) ) {
 
-		// PackAck - Setup Verification Array
-		if ( messageToClient.contains ( commsProtocol.getPacketCountAck () ) ) {
+			data = new byte[commsProtocol.getPacketCount ()][1];
 
-		    data = new byte[commsProtocol.getPacketCount ()][1];
-
-		    toClient.println ( messageToClient );
+			toClient.println ( messageToClient );
+		    }
 		}
 	    }
 

@@ -31,7 +31,7 @@ public class CommunicationProtocol {
 	    if ( input.contains ( packetsMessage ) ) {
 		
 		try {   
-		    String[] tokens = input.split ( delimiter );
+		    String[] tokens = input.split ( getDelimiter() );
 		    packetCount = Integer.parseInt ( tokens[1] );
 		    output = this.getPacketCountAckString ();
 		    serverState = SENDDATA;
@@ -49,7 +49,7 @@ public class CommunicationProtocol {
     }
 
     public String ProcessInput_Client ( String input ) {
-	String output = "";
+	String output = " ";
 
 	if ( clientState == WAITING ) {
 	    if ( input.equalsIgnoreCase ( helloMessage ) ) {
@@ -137,6 +137,14 @@ public class CommunicationProtocol {
     
     public void setComplete ( String complete ) {
 	this.complete = complete;
+    }
+
+    public String getDelimiter () {
+	return delimiter;
+    }
+
+    public void setDelimiter ( String delimiter ) {
+	this.delimiter = delimiter;
     }
 
 }
