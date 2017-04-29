@@ -76,7 +76,7 @@ public class TCP {
 	    String bufferString = new String ( buffer );
 	    System.out.println ( "Incoming Packets: " + bufferString );
 
-	    int packetCount = Integer.parseInt ( bufferString );
+	    int packetCount = Integer.parseInt ( bufferString.toString (), 10 );
 
 	    System.out.println ( packetCount );
 
