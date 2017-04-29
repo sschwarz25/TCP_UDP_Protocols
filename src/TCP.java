@@ -38,13 +38,13 @@ public class TCP {
 	    if ( bufferString.contains ( Integer.toString ( packetCount ) ) ) {
 
 		// Tell Server File Name
-		baos.write ( file.getName ().getBytes () );
-		out.write ( baos.toByteArray () );
+		//baos.write ( file.getName ().getBytes () );
+		//out.write ( baos.toByteArray () );
 
 		// Send File
-		while ( ( count = in.read ( buffer ) ) > 0 ) {
-		    out.write ( buffer, 0, count );
-		}
+		//while ( ( count = in.read ( buffer ) ) > 0 ) {
+		//    out.write ( buffer, 0, count );
+		//}
 	    }
 
 	} catch ( UnknownHostException e ) {
@@ -71,7 +71,6 @@ public class TCP {
 	    int packetCount = Integer.parseInt ( bufferString.trim () );
 
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
-	    baos.write ( "ACK_Packet_Count".getBytes () );
 	    out.write ( baos.toByteArray () );
 
 	    // Get File Name
