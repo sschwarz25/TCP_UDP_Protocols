@@ -46,8 +46,7 @@ public class TCP {
 		System.out.println ( "Server ACK Packet Count: " + bufferString );
 
 		// Tell Server File Name
-		baos.write ( file.getName ().getBytes () );
-		out.println ( baos.toByteArray () );
+		out.println ( file.getName () );
 
 		// Send File
 		// while ( ( count = in.read ( buffer ) ) > 0 ) {
@@ -68,7 +67,7 @@ public class TCP {
 	try ( ServerSocket server = new ServerSocket ( portNumber );
 		Socket socket = server.accept ();
 		BufferedReader in = new BufferedReader ( new InputStreamReader ( socket.getInputStream () ) );
-		PrintWriter out = new PrintWriter ( socket.getOutputStream () );
+		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true );
 		OutputStream fileOut = new FileOutputStream ( fileName );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
@@ -86,8 +85,10 @@ public class TCP {
 	    System.out.println ( "File Name: " + fileNameFromClient );
 
 	    // Prepare Sequence Validation
+	    String[] data = new String[packetCount];
+	    
 	    for ( int i = 0; i < packetCount; i++ ) {
-
+		
 	    }
 
 	    int count = 1;
