@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -18,7 +19,7 @@ public class TCP {
 	try ( Socket socket = new Socket ( IP, portNumber );
 		InputStream inFile = new FileInputStream ( file );
 		InputStream in = socket.getInputStream ();
-		OutputStream out = socket.getOutputStream ();
+		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
 	    System.out.println ( "Connected to Server!" );
@@ -30,7 +31,7 @@ public class TCP {
 
 	    // Convert to String, then bytes, then write to socket
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
-	    out.write ( baos.toByteArray () );
+	    out.println ( baos.toByteArray () );
 
 	    // Console the Packet Size
 	    System.out.println ( "Sending " + packetCount + " Packets." );
@@ -49,7 +50,7 @@ public class TCP {
 		baos.flush ();
 		out.flush ();
 		baos.write ( file.getName ().getBytes () );
-		out.write ( baos.toByteArray () );
+		out.println ( baos.toByteArray () );
 
 		// Send File
 		// while ( ( count = in.read ( buffer ) ) > 0 ) {
@@ -70,13 +71,12 @@ public class TCP {
 	try ( ServerSocket server = new ServerSocket ( portNumber );
 		Socket socket = server.accept ();
 		InputStream in = socket.getInputStream ();
-		OutputStream out = socket.getOutputStream ();
+		PrintWriter out = new PrintWriter( socket.getOutputStream () );
 		OutputStream fileOut = new FileOutputStream ( fileName );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
-	    int position = 0;
-	    
-	    position += in.read ( buffer );	    
+
+	    in.read ( buffer );
 	    String packetCountString = new String ( buffer );
 	    System.out.println ( "Incoming Packets: " + packetCountString );
 
@@ -84,13 +84,13 @@ public class TCP {
 
 	    // ACK Packet Count
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
-	    out.write ( baos.toByteArray () );
+	    out.println ( baos.toByteArray () );
 
 	    // Get File Name
-	    position += in.read ( buffer );
+	    in.read ( buffer );
 	    String fileNameFromClient = new String ( buffer );
 	    fileName.trim ();
-	    
+
 	    System.out.println ( "File Name: " + fileNameFromClient );
 
 	    // Prepare Sequence Validation
