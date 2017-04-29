@@ -17,41 +17,42 @@ public class TCP {
 
 	try ( Socket socket = new Socket ( IP, portNumber );
 		InputStream inFile = new FileInputStream ( file );
-		InputStream in	= socket.getInputStream ();
+		InputStream in = socket.getInputStream ();
 		OutputStream out = socket.getOutputStream ();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
 	    System.out.println ( "Connected to Server!" );
 
 	    int count = 1;
-	    
-	    //Get Packet Count Figured out
+
+	    // Get Packet Count Figured out
 	    int packetCount = ( int ) Math.ceil ( file.length () / buffer.length );
 
-	    //Convert to String, then bytes, then write to socket
+	    // Convert to String, then bytes, then write to socket
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
 	    out.write ( baos.toByteArray () );
 
-	    //Console the Packet Size
+	    // Console the Packet Size
 	    System.out.println ( "Sending " + packetCount + " Packets." );
 
-	    //------------WAIT ON SERVER
-	    
+	    // ------------WAIT ON SERVER
+
 	    // Get Packet Count ACK and Give File Name
-	    inFile.read ( buffer );
-	    String bufferString = new String ( buffer.toString () );
-	    System.out.println ( bufferString );
+	    in.read ( buffer );
+	    String bufferString = new String ( buffer );
+	    bufferString.trim ();
 
 	    if ( bufferString.contains ( Integer.toString ( packetCount ) ) ) {
+		System.out.println ( "Server ACK Packet Count: " + bufferString );
 
 		// Tell Server File Name
-		//baos.write ( file.getName ().getBytes () );
-		//out.write ( baos.toByteArray () );
+		baos.write ( file.getName ().getBytes () );
+		out.write ( baos.toByteArray () );
 
 		// Send File
-		//while ( ( count = in.read ( buffer ) ) > 0 ) {
-		//    out.write ( buffer, 0, count );
-		//}
+		// while ( ( count = in.read ( buffer ) ) > 0 ) {
+		// out.write ( buffer, 0, count );
+		// }
 	    }
 
 	} catch ( UnknownHostException e ) {
@@ -77,10 +78,16 @@ public class TCP {
 
 	    int packetCount = Integer.parseInt ( bufferString.trim () );
 
+	    // ACK Packet Count
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
 	    out.write ( baos.toByteArray () );
 
 	    // Get File Name
+	    in.read ( buffer );
+	    bufferString = new String ( buffer );
+	    bufferString.trim ();
+	    
+	    System.out.println ( "File Name: " + bufferString );
 
 	    // Prepare Sequence Validation
 	    for ( int i = 0; i < packetCount; i++ ) {
