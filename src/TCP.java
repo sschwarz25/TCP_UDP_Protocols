@@ -30,7 +30,7 @@ public class TCP {
 
 	    System.out.println ( "Sending " + packetCount + " Packets." );
 
-	    // Get asked file name
+	    // Get Packet Count ACK and Give File Name
 	    in.read ( buffer );
 	    String bufferString = new String ( buffer );
 	    System.out.println ( bufferString );
@@ -40,14 +40,6 @@ public class TCP {
 		// Tell Server File Name
 		baos.write ( file.getName ().getBytes () );
 		out.write ( baos.toByteArray () );
-		
-		
-		
-		
-		
-		
-		
-		
 
 		// Send File
 		while ( ( count = in.read ( buffer ) ) > 0 ) {
@@ -76,16 +68,18 @@ public class TCP {
 	    String bufferString = new String ( buffer );
 	    System.out.println ( "Incoming Packets: " + bufferString );
 
-	    int packetCount = Integer.parseInt ( bufferString.toString (), 10 );
+	    int packetCount = Integer.parseInt ( bufferString.trim () );
 
-	    System.out.println ( packetCount );
-
-	    baos.write ( packetCount );
+	    baos.write ( Integer.toString ( packetCount ).getBytes () );
 	    baos.write ( "ACK_Packet_Count".getBytes () );
 	    out.write ( baos.toByteArray () );
 
-	    // Prepare Sequence Validation
 	    // Get File Name
+
+	    // Prepare Sequence Validation
+	    for ( int i = 0; i < packetCount; i++ ) {
+
+	    }
 
 	    int count = 1;
 	    while ( ( count = in.read ( buffer ) ) > 0 ) {
