@@ -14,19 +14,17 @@ import java.net.UnknownHostException;
 
 public class TCP {
 
-    private static byte[] buffer = new byte[1024];
+    private static byte[] buffer   = new byte[1024];
+    static String	  filePath = "C:\\Test\\";
 
     public static void Client ( String IP, int portNumber, File file ) {
 
 	try ( Socket socket = new Socket ( IP, portNumber );
 		InputStream inFile = new FileInputStream ( file );
 		BufferedReader in = new BufferedReader ( new InputStreamReader ( socket.getInputStream () ) );
-		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true );
-		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
+		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true ); ) {
 
 	    System.out.println ( "Connected to Server!" );
-
-	    int count = 1;
 
 	    // Get Packet Count Figured out
 	    int packetCount = ( int ) Math.ceil ( file.length () / buffer.length );
@@ -49,9 +47,12 @@ public class TCP {
 		out.println ( file.getName () );
 
 		// Send File
-		// while ( ( count = in.read ( buffer ) ) > 0 ) {
-		// out.write ( buffer, 0, count );
-		// }
+		String read = "";
+		int seqNo = 0;
+		while ( ( read = in.readLine () ) != null ) {
+		    out.println (seqNo + " " + read );
+		    seqNo++;
+		}
 	    }
 
 	} catch ( UnknownHostException e ) {
@@ -68,8 +69,7 @@ public class TCP {
 		Socket socket = server.accept ();
 		BufferedReader in = new BufferedReader ( new InputStreamReader ( socket.getInputStream () ) );
 		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true );
-		OutputStream fileOut = new FileOutputStream ( fileName );
-		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
+		OutputStream fileOut = new FileOutputStream ( fileName ); ) {
 
 	    String packetCountString = in.readLine ();
 	    System.out.println ( "Incoming Packets: " + packetCountString );
@@ -82,19 +82,19 @@ public class TCP {
 	    // Get File Name
 	    String fileNameFromClient = in.readLine ();
 
-	    System.out.println ( "File Name: " + fileNameFromClient );
+	    System.out.println ( "File Path: " + filePath + fileNameFromClient );
 
-	    // Prepare Sequence Validation
+	    // Send Data
 	    String[] data = new String[packetCount];
-	    
 	    for ( int i = 0; i < packetCount; i++ ) {
-		
+		data[i] = in.readLine ();
+		System.out.println ( data[i] );
 	    }
 
 	    int count = 1;
 	    String read = "";
-	    
-	    while ( (read = in.readLine ()) != null) {
+
+	    while ( ( read = in.readLine () ) != null ) {
 		fileOut.write ( read.getBytes (), 0, count );
 	    }
 
