@@ -26,17 +26,33 @@ public class TCP {
 	    int packetCount = ( int ) Math.ceil ( file.length () / buffer.length );
 
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
-	    byte[] packetCountByteString = baos.toByteArray ();
-	    out.write ( packetCountByteString );
+	    out.write ( baos.toByteArray () );
 
-	    System.out.println ("Sending " + packetCount + " Packets.");
-	    
+	    System.out.println ( "Sending " + packetCount + " Packets." );
+
 	    // Get asked file name
-	    // Tell Server File Name
-	    //
+	    in.read ( buffer );
+	    String bufferString = new String ( buffer );
+	    System.out.println ( bufferString );
 
-	    while ( ( count = in.read ( buffer ) ) > 0 ) {
-		out.write ( buffer, 0, count );
+	    if ( bufferString.contains ( Integer.toString ( packetCount ) ) ) {
+
+		// Tell Server File Name
+		baos.write ( file.getName ().getBytes () );
+		out.write ( baos.toByteArray () );
+		
+		
+		
+		
+		
+		
+		
+		
+
+		// Send File
+		while ( ( count = in.read ( buffer ) ) > 0 ) {
+		    out.write ( buffer, 0, count );
+		}
 	    }
 
 	} catch ( UnknownHostException e ) {
@@ -52,19 +68,23 @@ public class TCP {
 	try ( ServerSocket server = new ServerSocket ( portNumber );
 		Socket socket = server.accept ();
 		InputStream in = socket.getInputStream ();
-		OutputStream out = new FileOutputStream ( fileName ); 
+		OutputStream out = new FileOutputStream ( fileName );
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
 	    in.read ( buffer );
 
 	    String bufferString = new String ( buffer );
 	    System.out.println ( "Incoming Packets: " + bufferString );
-	    
+
 	    int packetCount = Integer.parseInt ( bufferString );
-	    
+
 	    System.out.println ( packetCount );
 
-	    // Ask for File Name
+	    baos.write ( packetCount );
+	    baos.write ( "ACK_Packet_Count".getBytes () );
+	    out.write ( baos.toByteArray () );
+
+	    // Prepare Sequence Validation
 	    // Get File Name
 
 	    int count = 1;
