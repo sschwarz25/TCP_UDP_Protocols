@@ -1,6 +1,7 @@
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,7 +85,11 @@ public class Program {
 	    } else {
 		// Server
 		fileBytes = reassembleFile ( TCP.Server ( portNumber ) );
-		// TODO: Save File Bytes to File with Naming System
+		
+		try (FileOutputStream fos = new FileOutputStream ( "C:\\Test\\1.jpg" )) {
+		    fos.write ( fileBytes );
+		    fos.close ();
+		}
 	    }
 	} else {
 	    // UDP

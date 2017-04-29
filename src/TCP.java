@@ -35,23 +35,11 @@ public class TCP {
 		    for ( int i = 0; i < byteStrings.size (); i++ ) {
 			byteStrings.set ( i, sequenceNumber + " " + data.get ( i ) );
 			toServer.println ( byteStrings.get ( i ) );
+			System.out.println ( byteStrings.get ( i ) );
 		    }
 
-		    messageToServer = commsProtocol.getComplete();
-		    
-		    // TODO: Send Packets in sets of 10
-		    // TODO: At 10 packets, wait for ACK
-		    // TODO: If not ACK in 1 second, resend 10 packets
-		    // TODO: If ACKBAD, resend 10 packets
-		    // TODO: If ACK N%10 = 0, send next 10 packets
-		    // TODO: Once all packets are sent, send checksum 1
-		    // TODO: on ACKCHECKSUM1, send checksum 2
-		    // TODO: on ACKCHECKSUM2, send checksum 3
-		    // TODO: on ACKCHECKSUM3, send COMPLETE
-		    // TODO: on ACKCOMPLETE, close client
-		    // TODO: If no ACKCOMPLETE in 5 seconds, Server must have
-		    // reset for resend
-		    // TODO: Restart Process
+		    messageToServer = commsProtocol.getComplete ();
+
 		}
 
 		toServer.println ( messageToServer );
@@ -64,22 +52,26 @@ public class TCP {
 	    System.out.println ( "I/O Connection not established: " + e );
 	}
     }
-    
+
     public static ArrayList<byte[]> Server ( int portNumber ) {
 
 	ArrayList<byte[]> data = null;
 
 	try ( ServerSocket socket = new ServerSocket ( portNumber );
+
 		Socket connection = socket.accept ();
 		PrintWriter toClient = new PrintWriter ( connection.getOutputStream (), true );
 		BufferedReader fromClient = new BufferedReader (
 			new InputStreamReader ( connection.getInputStream () ) ); ) {
+
+	    System.out.println ( "Client connected." );
+
 	    CommunicationProtocol commsProtocol = new CommunicationProtocol ();
 
-	    String messageToClient = commsProtocol.ProcessInput_Server ( null );
+	    String messageToClient = commsProtocol.ProcessInput_Server ( "" );
 	    String messageFromClient = "";
 
-	    data = new ArrayList<byte[]> ( null );
+	    data = new ArrayList<byte[]> ();
 
 	    ArrayList<Boolean> sequenceVerification = null;
 
@@ -90,8 +82,23 @@ public class TCP {
 
 		if ( commsProtocol.getServerState () == commsProtocol.getSendDataState () ) {
 		    if ( messageFromClient.contains ( commsProtocol.getComplete () ) ) {
-			return data;
-			
+
+			Boolean verified = true;
+
+			for ( int i = 0; i < sequenceVerification.size (); i++ ) {
+			    if ( sequenceVerification.get ( i ) == false ) {
+				verified = false;
+			    } else {
+				System.out.println ( "Lost Packet: " + i );
+			    }
+			}
+
+			if ( verified ) {
+			    return data;
+			} else {
+			    System.out.println ( "Lost Packets" );
+			}
+
 		    } else {
 			String[] tokens = messageFromClient.split ( "\\s+" );
 			byte[] packetBytes = tokens[1].getBytes ();

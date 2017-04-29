@@ -23,7 +23,8 @@ public class CommunicationProtocol {
 	if ( serverState == WAITING ) {
 	    output = helloMessage;
 	    serverState = HELLO_DELIVERED;
-	    System.out.println ( helloMessage );
+	    System.out.println ( helloNote );
+	    System.out.println ( "STATE CHANGE: WAITING -> HELLO_DELIVERED" );
 	}
 
 	if ( serverState == HELLO_DELIVERED ) {
@@ -34,16 +35,14 @@ public class CommunicationProtocol {
 		    packetCount = Integer.parseInt ( tokens[1] );
 		    output = this.getPacketCountAckString ();
 		    serverState = SENDDATA;
+		    System.out.println ( output );
+		    System.out.println ( "STATE CHANGE: HELLO_DELIVERD -> SENDDATA" );
 
 		} catch ( NumberFormatException ne ) {
 		    System.err.println ( "Packet Count not a number: " + ne );
 		    System.exit ( 5 );
 		}
 	    }
-	}
-
-	if ( serverState == SENDDATA) {
-
 	}
 
 	return output;
@@ -56,6 +55,8 @@ public class CommunicationProtocol {
 	    if ( input.equalsIgnoreCase ( helloMessage ) ) {
 		output = getPacketsString ();
 		clientState = SENDDATA;
+		System.out.println ( output );
+		System.out.println ( "STATE CHANGE: WAITING -> SENDDATA" );
 	    }
 	}
 
