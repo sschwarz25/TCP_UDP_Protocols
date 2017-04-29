@@ -29,6 +29,8 @@ public class TCP {
 	    byte[] packetCountByteString = baos.toByteArray ();
 	    out.write ( packetCountByteString );
 
+	    System.out.println ("Sending " + packetCount + " Packets.");
+	    
 	    // Get asked file name
 	    // Tell Server File Name
 	    //
@@ -58,12 +60,7 @@ public class TCP {
 	    String bufferString = new String ( buffer );
 	    System.out.println ( "Incoming Packets: " + bufferString );
 	    
-	    String[] tokens = bufferString.split ( "\\s+" );
-	    
-	    tokens[1].replaceAll ( "\"", "" );
-	    tokens[1].replaceAll ( " ", "");
-	    
-	    int packetCount = Integer.parseInt ( tokens[1] );
+	    int packetCount = Integer.parseInt ( bufferString );
 	    
 	    System.out.println ( packetCount );
 
