@@ -115,6 +115,19 @@ public class Program {
 
 	return outputStream.toByteArray ();
     }
+    
+    public static byte[] reassembleFile ( byte[][] partitionedBytes ) throws IOException {
+
+	ByteArrayOutputStream outputStream = new ByteArrayOutputStream ();
+
+	for ( int i = 0; i < partitionedBytes.length; i++ ) {
+	    outputStream.write ( partitionedBytes[i] );
+	}
+
+	System.out.println ( "The file recomposition was a success. Passing byte string back." );
+
+	return outputStream.toByteArray ();
+    }
 
     public static ArrayList<byte[]> fileSplit ( byte[] fileBytes ) throws IOException {
 

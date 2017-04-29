@@ -62,7 +62,7 @@ public class CommunicationProtocol {
 
 	if ( clientState == SENDDATA ) {
 	    if ( input.contains ( packetCountAck ) ) {
-		output = sendData;
+		output = getSendDataString ();
 	    }
 	}
 
