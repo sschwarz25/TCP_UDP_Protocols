@@ -73,10 +73,10 @@ public class TCP {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream (); ) {
 
 	    in.read ( buffer );
-	    String bufferString = new String ( buffer );
-	    System.out.println ( "Incoming Packets: " + bufferString );
+	    String packetCountString = new String ( buffer );
+	    System.out.println ( "Incoming Packets: " + packetCountString );
 
-	    int packetCount = Integer.parseInt ( bufferString.trim () );
+	    int packetCount = Integer.parseInt ( packetCountString.trim () );
 
 	    // ACK Packet Count
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
@@ -84,10 +84,10 @@ public class TCP {
 
 	    // Get File Name
 	    in.read ( buffer );
-	    bufferString = new String ( buffer );
-	    bufferString.trim ();
+	    String fileNameFromClient = new String ( buffer );
+	    fileName.trim ();
 	    
-	    System.out.println ( "File Name: " + bufferString );
+	    System.out.println ( "File Name: " + fileNameFromClient );
 
 	    // Prepare Sequence Validation
 	    for ( int i = 0; i < packetCount; i++ ) {
