@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class TCP {
 
@@ -74,7 +75,8 @@ public class TCP {
 	    System.out.println ( "Incoming Packets: " + packetCountString );
 
 	    int packetCount = Integer.parseInt ( packetCountString.trim () );
-
+	    
+	    
 	    // ACK Packet Count
 	    out.println ( packetCount );
 
@@ -84,17 +86,15 @@ public class TCP {
 	    System.out.println ( "File Path: " + filePath + fileNameFromClient );
 
 	    // Send Data
-	    String[] data = new String[packetCount];
-	    for ( int i = 0; i < packetCount; i++ ) {
-		data[i] = in.readLine ();
-		System.out.println ( data[i] );
-	    }
-
-	    int count = 1;
-	    String read = "";
-
-	    while ( ( read = in.readLine () ) != null ) {
-		fileOut.write ( read.getBytes (), 0, count );
+	    ArrayList<String> data = new ArrayList<String>();
+	    int i = 0;
+	    
+	    while (true) {
+		String line = in.readLine ();
+		if ( line == null ) break;
+		data.add ( line );
+		System.out.println ( data.get ( i ) );
+		i++;
 	    }
 
 	} catch ( IOException e ) {
