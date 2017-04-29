@@ -8,34 +8,32 @@ public class CommunicationProtocol {
     private int	clientState = WAITING;
     private int	packetCount = 0;
 
-    public String packetCountAck = "PACKETCOUNTACK";
-    public String hello		 = "Hello";
-    public String packets	 = "Packets";
-    public String helloNote	 = "Hello message has been delivered to connected client.";
-    public String sendData	 = "Send Data";
+    private String packetCountAck = "PACKETCOUNTACK";
+    private String helloMessage	  = "Hello";
+    private String packetsMessage = "Packets";
+    private String helloNote	  = "Hello message has been delivered to connected client.";
+    private String sendData	  = "Send Data";
+    private String delimiter	  = "\\s+";
+    private String complete	  = "Complete";
 
-    // -------------------------------------------------------------
-    // --------------------SERVER INPUT PROCESSOR-------------------
-    // -------------------------------------------------------------
     public String ProcessInput_Server ( String input ) {
 
 	String output = null;
 
-	if ( this.getServerState () == this.getWaitingState () ) {
-	    output = this.getHelloString ();
-	    this.setServerState ( this.getHelloDeliveredState () );
-	    System.out.println ( this.getHelloNoteString () );
+	if ( serverState == WAITING ) {
+	    output = helloMessage;
+	    serverState = HELLO_DELIVERED;
+	    System.out.println ( helloMessage );
 	}
 
-	if ( this.getServerState () == this.getHelloDeliveredState () ) {
-	    if ( input.contains ( this.getPacketsString () ) ) {
-		try {
-		    String[] tokens = input.split ( "\\s+" );
-		    this.setPacketCount ( Integer.parseInt ( tokens[1] ) );
-
+	if ( serverState == HELLO_DELIVERED ) {
+	    if ( input.contains ( packetsMessage ) ) {
+		
+		try {   
+		    String[] tokens = input.split ( delimiter );
+		    packetCount = Integer.parseInt ( tokens[1] );
 		    output = this.getPacketCountAckString ();
-
-		    this.setServerState ( this.getSendDataState () );
+		    serverState = SENDDATA;
 
 		} catch ( NumberFormatException ne ) {
 		    System.err.println ( "Packet Count not a number: " + ne );
@@ -44,38 +42,32 @@ public class CommunicationProtocol {
 	    }
 	}
 
-	if ( this.getServerState () == this.getSendDataState () ) {
+	if ( serverState == SENDDATA) {
 
 	}
 
 	return output;
     }
 
-    // -------------------------------------------------------------
-    // --------------------CLIENT INPUT PROCESSOR-------------------
-    // -------------------------------------------------------------
     public String ProcessInput_Client ( String input ) {
 	String output = null;
 
-	if ( this.getClientState () == this.getWaitingState () ) {
-	    if ( input.equalsIgnoreCase ( this.getHelloString () ) ) {
-		output = this.getPacketsString ();
-		this.setClientState ( this.getSendDataState () );
+	if ( clientState == WAITING ) {
+	    if ( input.equalsIgnoreCase ( helloMessage ) ) {
+		output = getPacketsString ();
+		clientState = SENDDATA;
 	    }
 	}
 
-	if ( this.getClientState () == this.getSendDataState () ) {
-	    if ( input.contains ( this.getPacketCountAck () )) {
-		output = this.getSendDataString ();
+	if ( clientState == SENDDATA ) {
+	    if ( input.contains ( packetCountAck ) ) {
+		output = sendData;
 	    }
 	}
 
 	return output;
     }
 
-    // --------------------------------------------------------------
-    // --------------------GET | SET---------------------------------
-    // --------------------------------------------------------------
     public int getServerState () {
 	return serverState;
     }
@@ -115,25 +107,35 @@ public class CommunicationProtocol {
     public String getPacketCountAckString () {
 	return packetCountAck + " " + this.getPacketCount ();
     }
-    
+
     public String getPacketCountAck () {
 	return packetCountAck;
     }
 
     public String getHelloString () {
-	return hello;
+	return helloMessage;
     }
 
     public String getPacketsString () {
-	return packets + " " + this.getPacketCount ();
+	return packetsMessage + " " + this.packetCount;
     }
 
     public String getHelloNoteString () {
 	return helloNote;
     }
-    
+
     public String getSendDataString () {
 	return sendData;
+    }
+
+    
+    public String getComplete () {
+	return complete;
+    }
+
+    
+    public void setComplete ( String complete ) {
+	this.complete = complete;
     }
 
 }
