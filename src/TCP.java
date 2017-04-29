@@ -25,11 +25,8 @@ public class TCP {
 	    int count = 1;
 	    int packetCount = ( int ) Math.ceil ( file.length () / buffer.length );
 
-	    baos.write ( "Packets: ".getBytes () );
 	    baos.write ( Integer.toString ( packetCount ).getBytes () );
-
 	    byte[] packetCountByteString = baos.toByteArray ();
-
 	    out.write ( packetCountByteString );
 
 	    // Get asked file name
@@ -59,9 +56,12 @@ public class TCP {
 	    in.read ( buffer );
 
 	    String bufferString = new String ( buffer );
-	    System.out.println ( "Incoming " + bufferString );
+	    System.out.println ( "Incoming Packets: " + bufferString );
 	    
-	    String[] tokens = bufferString.split ( "\\s+", 2 );
+	    String[] tokens = bufferString.split ( "\\s+" );
+	    
+	    tokens[1].replaceAll ( "\"", "" );
+	    tokens[1].replaceAll ( " ", "");
 	    
 	    int packetCount = Integer.parseInt ( tokens[1] );
 	    
