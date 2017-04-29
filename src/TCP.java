@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -33,7 +34,8 @@ public class TCP {
 		    int sequenceNumber = 0;
 
 		    for ( int i = 0; i < data.size (); i++ ) {
-			byteStrings.add ( sequenceNumber + " " + data.get ( i ) );
+			String byteString = new String(data.get ( i ));
+			byteStrings.add ( sequenceNumber + " " + byteString );
 			sequenceNumber++;
 			toServer.println ( byteStrings.get ( i ) );
 			System.out.println ( byteStrings.get ( i ) );
@@ -72,8 +74,6 @@ public class TCP {
 	    String messageToClient = commsProtocol.ProcessInput_Server ( "" );
 	    String messageFromClient = "";
 
-	    Boolean[] sequenceVerification = null;
-
 	    toClient.println ( messageToClient );
 
 	    while ( ( messageFromClient = fromClient.readLine () ) != null ) {
@@ -84,16 +84,16 @@ public class TCP {
 
 			Boolean verified = true;
 
-			for ( int i = 0; i < sequenceVerification.length; i++ ) {
-			    if ( sequenceVerification[i] == false ) {
+			for ( int i = 0; i < data.length; i++ ) {
+			    if ( data[i] == null ) {
 				verified = false;
-			    } else {
 				System.out.println ( "Lost Packet: " + i );
 			    }
 			}
 
 			if ( verified ) {
 			    return data;
+			    
 			} else {
 			    System.out.println ( "Lost Packets" );
 			}
@@ -106,14 +106,7 @@ public class TCP {
 			try {
 			    int sequenceNumber = Integer.parseInt ( tokens[0] );
 
-			    if ( ( sequenceNumber % 10 ) == 0 ) {
-				// TODO: Check 10 spots and Ack Back
-			    }
-
-			    if ( data[sequenceNumber] == null ) {
-				data[sequenceNumber] = packetBytes;
-				sequenceVerification[sequenceNumber] = true;
-			    }
+			    data[sequenceNumber] = packetBytes;
 
 			    continue;
 			} catch ( NumberFormatException ne ) {
@@ -130,26 +123,8 @@ public class TCP {
 
 		    data = new byte[commsProtocol.getPacketCount ()][1];
 
-		    sequenceVerification = new Boolean[commsProtocol.getPacketCount ()];
-
-		    for ( int i = 0; i < sequenceVerification.length; i++ ) {
-			sequenceVerification[i] = false;
-		    }
-
 		    toClient.println ( messageToClient );
 		}
-
-		// TODO: Tell Client to SEND DATA
-		// TODO: Split String into SeqNo and Byte Data
-		// TODO: Convert Byte Data String to byte[]
-		// TODO: Store Packet and Mark Off SeqNo
-		// TODO: ACK every 10 packets
-		// TODO: Completed Transfer
-		// TODO: Check and ack all packets - FINAL ACK
-		// TODO: Receive checksum 3 times from Client with CHECKSUMACK
-		// each time.
-		// TODO: Triple Verify File
-		// TODO: Return and close out.
 	    }
 
 	} catch ( IOException e ) {

@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.io.FileUtils;
+
 public class Program {
 
     public static void main ( String[] args ) throws IOException {
@@ -85,11 +87,11 @@ public class Program {
 	    } else {
 		// Server
 		fileBytes = reassembleFile ( TCP.Server ( portNumber ) );
-		
-		try (FileOutputStream fos = new FileOutputStream ( "C:\\Test\\1.jpg" )) {
-		    fos.write ( fileBytes );
-		    fos.close ();
-		}
+
+		System.out.println ( "Successful Transfer - Writing to File" );
+
+		FileUtils.writeByteArrayToFile ( new File ( "C:\\Test\\1.jpg" ), fileBytes );
+
 	    }
 	} else {
 	    // UDP
@@ -115,7 +117,7 @@ public class Program {
 
 	return outputStream.toByteArray ();
     }
-    
+
     public static byte[] reassembleFile ( byte[][] partitionedBytes ) throws IOException {
 
 	ByteArrayOutputStream outputStream = new ByteArrayOutputStream ();
@@ -126,7 +128,9 @@ public class Program {
 
 	System.out.println ( "The file recomposition was a success. Passing byte string back." );
 
-	return outputStream.toByteArray ();
+	byte[] bytes = outputStream.toByteArray ();
+
+	return bytes;
     }
 
     public static ArrayList<byte[]> fileSplit ( byte[] fileBytes ) throws IOException {

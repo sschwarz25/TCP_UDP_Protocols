@@ -49,7 +49,7 @@ public class CommunicationProtocol {
     }
 
     public String ProcessInput_Client ( String input ) {
-	String output = null;
+	String output = "";
 
 	if ( clientState == WAITING ) {
 	    if ( input.equalsIgnoreCase ( helloMessage ) ) {

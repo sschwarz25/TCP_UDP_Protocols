@@ -43,6 +43,7 @@ public class UDP {
 	    bytesReceived += receivedPacket.getLength ();
 	}
 	server.close ();
+	writer.close ();
 	System.out.println ( "File is completely received" );
 
     }
@@ -89,5 +90,6 @@ public class UDP {
 	    System.out.println ( "No response from server" );
 	}
 	client.close ();
+	reader.close ();
     }
 }
