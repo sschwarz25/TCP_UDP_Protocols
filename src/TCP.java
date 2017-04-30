@@ -24,6 +24,7 @@ public class TCP {
 		InputStream inFile = new FileInputStream ( file );
 		BufferedReader in = new BufferedReader ( new InputStreamReader ( socket.getInputStream () ) );
 		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true ); ) {
+	    OutputStream outWrite = socket.getOutputStream ();
 
 	    System.out.println ( "Connected to Server!" );
 
@@ -50,7 +51,8 @@ public class TCP {
 		// Send File
 		int seqNo = 0;
 		while ( ( inFile.read ( buffer ) ) > 0 ) {
-		    out.println ( /* seqNo + " " + */ buffer );
+		    // out.println ( seqNo + " " + buffer );
+		    outWrite.write ( buffer );
 		    seqNo++;
 		}
 	    }
@@ -68,6 +70,7 @@ public class TCP {
 	try ( ServerSocket server = new ServerSocket ( portNumber );
 		Socket socket = server.accept ();
 		BufferedReader in = new BufferedReader ( new InputStreamReader ( socket.getInputStream () ) );
+		InputStream inRead = socket.getInputStream ();
 		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true ); ) {
 
 	    String packetCountString = in.readLine ();
@@ -86,25 +89,14 @@ public class TCP {
 	    // Send Data
 	    ArrayList<String> data = new ArrayList<String> ();
 	    int i = 0;
-	    int nullCount = 0;
 	    try ( OutputStream fileOut = new FileOutputStream ( filePath + fileNameFromClient ); ) {
 		while ( true ) {
-		    String line = in.readLine ();
+		    inRead.read ( buffer );
 
-		    if ( line == null ){
-			nullCount++;
-			
-		    } else {
-			nullCount = 0;
-			data.add ( new String(line) );
-			fileOut.write ( line.getBytes () );
-			System.out.println ( data.get ( i ) );
-		    }
-		    
-		    if ( nullCount == 5) {
-			break;
-		    }
-		    
+		    data.add ( new String ( buffer ) );
+		    fileOut.write ( buffer );
+		    System.out.println ( data.get ( i ) );
+
 		    i++;
 		}
 	    }
