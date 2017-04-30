@@ -50,7 +50,7 @@ public class TCP {
 		// Send File
 		int seqNo = 0;
 		while ( ( inFile.read ( buffer ) ) > 0 ) {
-		    out.println ( /* seqNo + " " + */ buffer );
+		    out.println ( /* seqNo + " " + */ new String ( buffer ) );
 		    seqNo++;
 		}
 	    }
