@@ -67,7 +67,7 @@ public class Program {
 		TCP.Client ( destinationIp, portNumber, new File ( args[4] ) );
 	    } else {
 		System.out.println ( "Waiting for Client to Connect..." );
-		TCP.Server ( portNumber, args[4] );
+		TCP.Server ( portNumber );
 	    }
 
 	} else {

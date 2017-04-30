@@ -39,18 +39,18 @@ public class TCP {
 	    // ------------WAIT ON SERVER
 
 	    // Get Packet Count ACK and Give File Name
-	    String bufferString = in.readLine ();
+	    String packetCountString = in.readLine ();
 
-	    if ( bufferString.contains ( Integer.toString ( packetCount ) ) ) {
-		System.out.println ( "Server ACK Packet Count: " + bufferString );
+	    if ( packetCountString.contains ( Integer.toString ( packetCount ) ) ) {
+		System.out.println ( "Server ACK Packet Count: " + packetCountString );
 
 		// Tell Server File Name
 		out.println ( file.getName () );
 
 		// Send File
 		int seqNo = 0;
-		while ( ( inFile.read( buffer ) ) > 0 ) {
-		    out.println (seqNo + " " + new String(buffer) );
+		while ( ( inFile.read ( buffer ) ) > 0 ) {
+		    out.println ( /* seqNo + " " + */ buffer );
 		    seqNo++;
 		}
 	    }
@@ -63,20 +63,18 @@ public class TCP {
 	}
     }
 
-    public static byte[][] Server ( int portNumber, String fileName ) {
+    public static byte[][] Server ( int portNumber ) {
 
 	try ( ServerSocket server = new ServerSocket ( portNumber );
 		Socket socket = server.accept ();
 		BufferedReader in = new BufferedReader ( new InputStreamReader ( socket.getInputStream () ) );
-		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true );
-		OutputStream fileOut = new FileOutputStream ( fileName ); ) {
+		PrintWriter out = new PrintWriter ( socket.getOutputStream (), true ); ) {
 
 	    String packetCountString = in.readLine ();
 	    System.out.println ( "Incoming Packets: " + packetCountString );
 
 	    int packetCount = Integer.parseInt ( packetCountString.trim () );
-	    
-	    
+
 	    // ACK Packet Count
 	    out.println ( packetCount );
 
@@ -86,15 +84,23 @@ public class TCP {
 	    System.out.println ( "File Path: " + filePath + fileNameFromClient );
 
 	    // Send Data
-	    ArrayList<String> data = new ArrayList<String>();
+	    ArrayList<String> data = new ArrayList<String> ();
 	    int i = 0;
-	    
-	    while (true) {
-		String line = in.readLine ();
-		if ( line == null ) break;
-		data.add ( line );
-		System.out.println ( data.get ( i ) );
-		i++;
+
+	    try ( OutputStream fileOut = new FileOutputStream ( filePath + fileNameFromClient ); ) {
+		while ( true ) {
+		    String line = in.readLine ();
+
+		    if ( line == null )
+			break;
+
+		    data.add ( line );
+
+		    fileOut.write ( line.getBytes () );
+		    System.out.println ( data.get ( i ) );
+
+		    i++;
+		}
 	    }
 
 	} catch ( IOException e ) {
