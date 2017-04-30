@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class TCP {
 
-    private static byte[] buffer   = new byte[1024];
+    private static byte[] buffer   = new byte[512];
     static String	  filePath = "C:\\Test\\";
 
     public static void Client ( String IP, int portNumber, File file ) {
@@ -51,7 +51,7 @@ public class TCP {
 		// Send File
 		int seqNo = 0;
 		while ( ( inFile.read ( buffer ) ) > 0 ) {
-		    // out.println ( seqNo + " " + buffer );
+		    //out.println ( seqNo );
 		    outWrite.write ( buffer );
 		    seqNo++;
 		}
@@ -90,9 +90,7 @@ public class TCP {
 	    ArrayList<String> data = new ArrayList<String> ();
 	    int i = 0;
 	    try ( OutputStream fileOut = new FileOutputStream ( filePath + fileNameFromClient ); ) {
-		while ( true ) {
-		    inRead.read ( buffer );
-
+		while ( inRead.read ( buffer ) > 0 ) {
 		    data.add ( new String ( buffer ) );
 		    fileOut.write ( buffer );
 		    System.out.println ( data.get ( i ) );
