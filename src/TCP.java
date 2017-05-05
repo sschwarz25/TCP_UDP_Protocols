@@ -51,7 +51,7 @@ public class TCP {
 		// Send File
 		int seqNo = 0;
 		while ( ( inFile.read ( buffer ) ) > 0 ) {
-		    //out.println ( seqNo );
+		    // out.println ( seqNo );
 		    outWrite.write ( buffer );
 		    seqNo++;
 		}
@@ -87,15 +87,21 @@ public class TCP {
 	    System.out.println ( "File Path: " + filePath + fileNameFromClient );
 
 	    // Send Data
+	    int c = 0;
 	    ArrayList<String> data = new ArrayList<String> ();
-	    int i = 0;
 	    try ( OutputStream fileOut = new FileOutputStream ( filePath + fileNameFromClient ); ) {
-		while ( inRead.read ( buffer ) > 0 ) {
-		    data.add ( new String ( buffer ) );
-		    fileOut.write ( buffer );
-		    System.out.println ( data.get ( i ) );
+		while ( true ) {
+		    c += inRead.read ( buffer );
 
-		    i++;
+		    if ( c < 0 )
+			break;
+
+		    if ( buffer != " ".getBytes () ) {
+			data.add ( new String ( buffer ) );
+			fileOut.write ( buffer );
+		    }
+
+		    buffer = " ".getBytes ();
 		}
 	    }
 
